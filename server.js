@@ -15,273 +15,203 @@ app.get('/', (req, res) => {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Cloud Deployment Dashboard</title>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+        <title>Cloud Platform</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
         <style>
             :root {
-                --bg-color: #0f172a;
-                --primary: #8b5cf6;
-                --secondary: #3b82f6;
-                --success: #10b981;
-                --danger: #ef4444;
-                --text-main: #f8fafc;
-                --text-muted: #94a3b8;
+                --bg: #000000;
+                --fg: #ffffff;
+                --muted: #888888;
+                --border: #333333;
+                --card-bg: #0a0a0a;
+                --accent: #0070f3;
+                --success: #00f5d4;
+                --danger: #ff003c;
             }
 
-            * {
-                box-sizing: border-box;
-                margin: 0;
-                padding: 0;
-                font-family: 'Inter', sans-serif;
-            }
+            * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 
             body {
-                background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-                color: var(--text-main);
+                background-color: var(--bg);
+                color: var(--fg);
                 display: flex;
-                justify-content: center;
                 align-items: center;
+                justify-content: center;
                 min-height: 100vh;
-                overflow: hidden;
-                position: relative;
+                background-image: 
+                    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+                background-size: 30px 30px;
+                background-position: center center;
             }
 
-            /* Animated background elements */
-            .blob {
-                position: absolute;
-                filter: blur(80px);
-                z-index: 0;
-                opacity: 0.6;
-                animation: float 10s ease-in-out infinite alternate;
-            }
-            .blob-1 {
-                width: 300px;
-                height: 300px;
-                background: var(--primary);
-                top: -100px;
-                left: -100px;
-                border-radius: 50%;
-            }
-            .blob-2 {
-                width: 400px;
-                height: 400px;
-                background: var(--secondary);
-                bottom: -150px;
-                right: -100px;
-                border-radius: 50%;
-                animation-delay: -5s;
-            }
-
-            @keyframes float {
-                0% { transform: translateY(0) scale(1); }
-                100% { transform: translateY(30px) scale(1.1); }
-            }
-
-            .container {
-                background: rgba(30, 41, 59, 0.4);
-                backdrop-filter: blur(20px);
-                -webkit-backdrop-filter: blur(20px);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                padding: 50px 40px;
-                border-radius: 24px;
-                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            .dashboard {
                 width: 100%;
-                max-width: 480px;
-                text-align: center;
-                z-index: 1;
-                transform: translateY(20px);
-                opacity: 0;
-                animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+                max-width: 800px;
+                padding: 40px;
+                animation: fadeIn 0.8s ease-out;
             }
 
-            @keyframes slideUp {
-                to { transform: translateY(0); opacity: 1; }
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
             }
 
-            .logo-container {
-                width: 80px;
-                height: 80px;
-                margin: 0 auto 20px;
-                background: linear-gradient(135deg, var(--primary), var(--secondary));
-                border-radius: 24px;
+            .header {
+                margin-bottom: 32px;
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-end;
+            }
+
+            .header h1 {
+                font-size: 24px;
+                font-weight: 600;
+                letter-spacing: -0.5px;
                 display: flex;
                 align-items: center;
-                justify-content: center;
-                font-size: 2.5rem;
-                box-shadow: 0 10px 20px -5px rgba(139, 92, 246, 0.5);
-                transform: rotate(-10deg);
-                transition: transform 0.3s ease;
+                gap: 12px;
             }
 
-            .container:hover .logo-container {
-                transform: rotate(0deg) scale(1.05);
-            }
-
-            h1 {
-                font-size: 2rem;
-                font-weight: 800;
-                margin-bottom: 10px;
-                background: linear-gradient(to right, #fff, #94a3b8);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                letter-spacing: -1px;
-            }
-
-            p.subtitle {
-                color: var(--text-muted);
-                font-size: 1rem;
-                margin-bottom: 35px;
-                line-height: 1.5;
-            }
-
-            .status-badge {
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                padding: 8px 16px;
-                border-radius: 30px;
-                font-size: 0.85rem;
-                font-weight: 600;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                margin-bottom: 30px;
-                transition: all 0.3s ease;
-            }
-
-            .status-badge::before {
+            .header h1::before {
                 content: '';
                 display: block;
+                width: 16px;
+                height: 16px;
+                background: var(--fg);
+                border-radius: 4px;
+            }
+
+            .status-dot {
+                display: inline-block;
                 width: 8px;
                 height: 8px;
+                background-color: var(--success);
                 border-radius: 50%;
-            }
-
-            .status-badge.secure {
-                background: rgba(16, 185, 129, 0.1);
-                color: var(--success);
-                border: 1px solid rgba(16, 185, 129, 0.2);
-            }
-            .status-badge.secure::before {
-                background: var(--success);
                 box-shadow: 0 0 10px var(--success);
+                animation: pulse 2s infinite;
             }
 
-            .status-badge.insecure {
-                background: rgba(239, 68, 68, 0.1);
-                color: var(--danger);
-                border: 1px solid rgba(239, 68, 68, 0.2);
-            }
-            .status-badge.insecure::before {
-                background: var(--danger);
-                box-shadow: 0 0 10px var(--danger);
+            @keyframes pulse {
+                0% { box-shadow: 0 0 0 0 rgba(0, 245, 212, 0.4); }
+                70% { box-shadow: 0 0 0 10px rgba(0, 245, 212, 0); }
+                100% { box-shadow: 0 0 0 0 rgba(0, 245, 212, 0); }
             }
 
-            .info-grid {
+            .bento-grid {
                 display: grid;
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(3, 1fr);
                 gap: 16px;
-                text-align: left;
-                margin-bottom: 40px;
             }
 
-            .info-item {
-                background: rgba(15, 23, 42, 0.6);
-                padding: 16px 20px;
+            .card {
+                background: var(--card-bg);
+                border: 1px solid var(--border);
                 border-radius: 12px;
-                border: 1px solid rgba(255, 255, 255, 0.05);
-                transition: transform 0.2s, background 0.2s;
+                padding: 24px;
+                transition: all 0.2s ease;
+                position: relative;
+                overflow: hidden;
             }
 
-            .info-item:hover {
+            .card:hover {
+                border-color: #555;
                 transform: translateY(-2px);
-                background: rgba(15, 23, 42, 0.8);
-                border-color: rgba(255, 255, 255, 0.1);
             }
 
-            .info-label {
-                font-size: 0.75rem;
-                color: var(--text-muted);
+            .card::after {
+                content: '';
+                position: absolute;
+                top: 0; left: 0; right: 0; bottom: 0;
+                background: radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%);
+                opacity: 0;
+                transition: opacity 0.3s;
+                pointer-events: none;
+            }
+            
+            .card:hover::after { opacity: 1; }
+
+            .card.span-2 { grid-column: span 2; }
+            .card.span-3 { grid-column: span 3; }
+
+            .card-label {
+                font-size: 12px;
+                color: var(--muted);
                 text-transform: uppercase;
                 letter-spacing: 1px;
-                margin-bottom: 6px;
-                font-weight: 600;
+                margin-bottom: 8px;
             }
 
-            .info-value {
-                font-size: 1.05rem;
+            .card-value {
+                font-size: 20px;
                 font-weight: 500;
-                color: var(--text-main);
             }
 
-            .btn-group {
+            .mono { font-family: monospace; font-size: 14px; color: var(--muted); }
+
+            .actions {
                 display: flex;
-                gap: 16px;
+                gap: 12px;
+                margin-top: 16px;
             }
 
             .btn {
-                flex: 1;
-                padding: 14px 20px;
-                border-radius: 12px;
-                font-weight: 600;
-                font-size: 0.95rem;
+                background: var(--fg);
+                color: var(--bg);
                 text-decoration: none;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                text-align: center;
-                position: relative;
-                overflow: hidden;
+                padding: 10px 16px;
+                border-radius: 6px;
+                font-size: 14px;
+                font-weight: 500;
+                transition: opacity 0.2s;
             }
 
-            .btn-primary {
-                background: linear-gradient(135deg, var(--primary), var(--secondary));
-                color: #fff;
-                box-shadow: 0 4px 15px -3px rgba(139, 92, 246, 0.4);
-            }
+            .btn:hover { opacity: 0.8; }
 
-            .btn-primary:hover {
-                box-shadow: 0 8px 25px -5px rgba(139, 92, 246, 0.6);
-                transform: translateY(-2px);
+            .btn-outline {
+                background: transparent;
+                color: var(--fg);
+                border: 1px solid var(--border);
             }
+            .btn-outline:hover { background: rgba(255,255,255,0.05); }
 
-            .btn-secondary {
-                background: rgba(255, 255, 255, 0.05);
-                color: var(--text-main);
-                border: 1px solid rgba(255, 255, 255, 0.1);
+            @media (max-width: 600px) {
+                .bento-grid { grid-template-columns: 1fr; }
+                .card.span-2, .card.span-3 { grid-column: span 1; }
+                .card.span-3 { flex-direction: column; align-items: flex-start !important; gap: 16px; }
             }
-
-            .btn-secondary:hover {
-                background: rgba(255, 255, 255, 0.1);
-                border-color: rgba(255, 255, 255, 0.2);
-                transform: translateY(-2px);
-            }
-
         </style>
     </head>
     <body>
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="container">
-            <div class="logo-container">🚀</div>
-            <h1>Cloud Dashboard</h1>
-            <p class="subtitle">System operational and ready for deployment.</p>
+        <div class="dashboard">
+            <div class="header">
+                <h1>Cloud Deployment</h1>
+                <div class="mono"><span class="status-dot"></span> Operational</div>
+            </div>
             
-            <div class="status-badge ${protocolClass}">
-                ${isSecure}
-            </div>
-
-            <div class="info-grid">
-                <div class="info-item">
-                    <div class="info-label">Environment</div>
-                    <div class="info-value">Ubuntu Server (AWS EC2)</div>
+            <div class="bento-grid">
+                <div class="card span-2">
+                    <div class="card-label">Protocol Status</div>
+                    <div class="card-value">${isSecure}</div>
+                    <div class="mono" style="margin-top: 8px;">Network: Edge Network</div>
                 </div>
-                <div class="info-item">
-                    <div class="info-label">System Time</div>
-                    <div class="info-value">${new Date().toUTCString()}</div>
+                
+                <div class="card">
+                    <div class="card-label">Region</div>
+                    <div class="card-value">us-east-1</div>
+                    <div class="mono" style="margin-top: 8px;">AWS EC2</div>
                 </div>
-            </div>
 
-            <div class="btn-group">
-                <a href="/api/info" class="btn btn-primary">App Info</a>
-                <a href="/health" class="btn btn-secondary">Health Check</a>
+                <div class="card span-3" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div class="card-label">System Time</div>
+                        <div class="card-value">${new Date().toUTCString()}</div>
+                    </div>
+                    <div class="actions">
+                        <a href="/api/info" class="btn">View Info</a>
+                        <a href="/health" class="btn btn-outline">Check Health</a>
+                    </div>
+                </div>
             </div>
         </div>
     </body>
